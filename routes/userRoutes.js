@@ -11,18 +11,18 @@ import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Protect all routes - require authentication
-router.use(protect);
+// Public route - CREATE new user (no authentication required)
+router.post('/register', userValidationRules, createUser);
 
-// GET all users and CREATE new user
-router.route('/')
-    .get(getUsers)
-    .post(userValidationRules, createUser);
+// // Protect all remaining routes - require authentication
+// router.use(protect);
 
-// GET, UPDATE, and DELETE user by ID
-router.route('/:id')
-    .get(getUserById)
-    .put(updateUser)
-    .delete(deleteUser);
+// GET all users (protected)
+router.get('/user-list', getUsers);
+router.get('/user-details', getUserById);
+router.put('/update-details', updateUser);
+router.delete('/delete-details', deleteUser);
+
+
 
 export default router;
