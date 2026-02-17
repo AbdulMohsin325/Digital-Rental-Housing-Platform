@@ -46,6 +46,14 @@ const userSchema = new mongoose.Schema(
         isActive: {
             type: Boolean,
             default: true
+        },
+        isAdmin: {
+            type: Boolean,
+            default: false
+        },
+        userId:{
+            type: String,
+            unique: true
         }
     },
     {
@@ -62,6 +70,35 @@ userSchema.pre('save', async function (next) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
+
+userSchema.pre('save', async function (next) {
+
+    if (!this.isNew) {
+        return next();
+    }
+
+    const lastUser = await mongoose
+        .model('User')
+        .findOne({ userId: { $exists: true } })
+        .sort({ createdAt: -1 });
+
+    let nextNumber = 1;
+
+    if (lastUser && lastUser.userId) {
+
+        const match = lastUser.userId.match(/\d+/);
+
+        if (match) {
+            nextNumber = parseInt(match[0]) + 1;
+        }
+    }
+
+    this.userId = `UID${String(nextNumber).padStart(3, '0')}`;
+
+    next();
+});
+
+
 
 // Sign JWT and return
 userSchema.methods.getSignedJwtToken = function () {
