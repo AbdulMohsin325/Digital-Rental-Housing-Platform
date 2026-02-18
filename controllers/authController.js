@@ -5,7 +5,7 @@ import User from '../models/User.js';
 // @access  Public
 export const register = async (req, res) => {
     try {
-        const { name, email, password, age, phone, address,isAdmin } = req.body;
+        const { name, email, password, age, phone, address } = req.body;
 
         // Check if user already exists
         const userExists = await User.findOne({ email });
@@ -24,8 +24,8 @@ export const register = async (req, res) => {
             password,
             age,
             phone,
-            address,
-            isAdmin
+            address
+            // isAdmin
         });
 
         // Send token response

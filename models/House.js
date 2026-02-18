@@ -60,10 +60,11 @@ const houseSchema = new mongoose.Schema(
             default: true
         },
         owner: {
-            type: String,
-            trim: true
-        },
-        homeId: {
+    type: String,
+ 
+    required: true
+},
+homeId: {
             type: String,
             trim: true
         }
@@ -75,16 +76,24 @@ const houseSchema = new mongoose.Schema(
 
 
 houseSchema.pre('save', async function (next) {
-    
-    let record =  await House.findOne().sort({ homeId: -1 }).limit(1);
-    let nextId= record.homeId.slice(-3);
-    nextId = parseInt(nextId) + 1;  
-    this.homeId = `HID${String(nextId).slice(-3)}`;
+
+    const HouseModel = mongoose.model('House');
+
+    const record = await HouseModel.findOne().sort({ createdAt: -1 });
+
+    let nextNumber = 1;
+
+    if (record && record.homeId) {
+        const match = record.homeId.match(/\d+/);
+        if (match) {
+            nextNumber = parseInt(match[0]) + 1;
+        }
+    }
+
+    this.homeId = `HID${String(nextNumber).padStart(3, '0')}`;
+
     next();
 });
-
-
-
 
 
 const House = mongoose.model('House', houseSchema);

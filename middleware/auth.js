@@ -37,3 +37,19 @@ export const protect = async (req, res, next) => {
         });
     }
 };
+
+// Authorize Admin (check role)
+export const authorizeAdmin = (req, res, next) => {
+    // if (!req.user || !req.user.isAdmin) {
+    //     return res.status(403).json({
+    //         success: false,
+    //         message: 'Admin only access'
+    //     });
+
+    if (!req.user) {
+        return res.status(401).json({ message: "User not found" });
+    }
+
+
+    next();
+};

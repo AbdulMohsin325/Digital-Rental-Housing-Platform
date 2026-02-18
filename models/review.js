@@ -3,25 +3,27 @@ import mongoose from "mongoose";
 const reviewSchema = new mongoose.Schema({
 
     house: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'House'
+        type: string,
+        required: true
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        type: string,
     },
     rating: {
         type: Number,
-        required: true
+        required: true,
+        min:0,
+        max:5
     },
     comment: {
         type: String,
         required: true
     }
 
+
     
     
-})
+}, {timestamps: true})
 
 const Review = mongoose.model('Review', reviewSchema);
 
