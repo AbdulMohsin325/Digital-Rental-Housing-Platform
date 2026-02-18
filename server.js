@@ -6,7 +6,8 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 
 import houseRoutes from './routes/house.js';
-
+import reviewRoutes from './routes/reviewRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -26,6 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/house', houseRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/booking', bookingRoutes);
 
 // app.use("/api/admin", adminRoutes);
 

@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 
+
 const houseSchema = new mongoose.Schema(
     {
         title:{
             type: String,
-            
+            // required: true,
+            trim: true
+
         },
        description: {
            type: String,
@@ -12,7 +15,8 @@ const houseSchema = new mongoose.Schema(
        },
        price: {
            type: Number,
-           trim: true
+           trim: true,
+           required: true
        },
        type: {
            type: String,
@@ -20,11 +24,13 @@ const houseSchema = new mongoose.Schema(
        },
        rooms: {
            type: Number,
-           trim: true
+           trim: true,
+           required: true
        },
        bathrooms: {
            type: Number,
-           trim: true
+           trim: true,
+           required: true
        },
        isFurnished: {
            type: Boolean,
@@ -34,10 +40,10 @@ const houseSchema = new mongoose.Schema(
            type: [String],
            trim: true
        },
-        name: {
-            type: String,
-            trim: true
-        },
+        // name: {
+        //     type: String,
+        //     trim: true
+        // },
         address: {
             street: String,
             city: String,

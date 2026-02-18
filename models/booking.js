@@ -1,9 +1,11 @@
+//booking for reservation of house
+
 import mongoose from "mongoose";
 
 // property (reference to property)
 
 const bookingSchema = new mongoose.Schema({
-    property: {
+    house: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'House'
     },
