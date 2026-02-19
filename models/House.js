@@ -15,7 +15,6 @@ const houseSchema = new mongoose.Schema(
        },
        price: {
            type: Number,
-           trim: true,
            required: true
        },
        type: {
@@ -24,12 +23,10 @@ const houseSchema = new mongoose.Schema(
        },
        rooms: {
            type: Number,
-           trim: true,
            required: true
        },
        bathrooms: {
            type: Number,
-           trim: true,
            required: true
        },
        isFurnished: {
@@ -61,7 +58,7 @@ const houseSchema = new mongoose.Schema(
         },
         owner: {
     type: String,
- 
+    // ref: "User",
     required: true
 },
 homeId: {

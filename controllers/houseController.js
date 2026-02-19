@@ -22,7 +22,7 @@ import House from "../models/House.js";
 
 export const createHouse = async (req, res) => {
     try {
-        const { title, description, pricePerNight, location, images } = req.body;
+        const { title, description, price, type, rooms, bathrooms, isFurnished, address, images } = req.body;
 
         const house = await House.create({
             title,
@@ -43,7 +43,8 @@ export const createHouse = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ 
+            success: false,message: error.message });
     }
 };
 
@@ -51,7 +52,8 @@ export const createHouse = async (req, res) => {
 
 export const getAllHouses = async (req, res) => {
     try {
-        const houses = await House.find().populate("owner", "name email");
+        const houses = await House.find()
+        // .populate("owner", "name email");
 
         res.json({
             success: true,
