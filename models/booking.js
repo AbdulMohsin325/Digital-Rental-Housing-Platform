@@ -1,40 +1,42 @@
 // //booking for reservation of house
 
-// import mongoose from "mongoose";
+import mongoose from "mongoose";
 
 
 // // property (reference to property)
 
-// const bookingSchema = new mongoose.Schema({
-//     house: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: 'House'
-//     },
-//     user: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: 'User'
-//     },
-//     startDate: {
-//         type: Date,
-//         required: true
-//     },
-//     endDate: {
-//         type: Date,
-//         required: true
-//     },
-//     totalPrice: {
-//         type: Number,
-//         required: true
-//     },
-//     status: {
-//         type: String,
-//         enum: ['pending', 'approved', 'rejected'],
-//         default: 'pending'
-//     }
-// },
-// {timestamps: true}
-// );
+const bookingSchema = new mongoose.Schema({
+    house: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'House',
+        required: true
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate: {
+        type: Date,
+        required: true
+    },
+    totalPrice: {
+        type: Number,
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending'
+    }
+},
+{timestamps: true}
+);
 
-// const Booking = mongoose.model('Booking', bookingSchema);
+const Booking = mongoose.model('Booking', bookingSchema);
 
-// export default Booking;
+export default Booking;
