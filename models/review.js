@@ -17,13 +17,15 @@ const reviewSchema = new mongoose.Schema({
     },
     comment: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     }
 
 
     
     
 }, {timestamps: true})
+reviewSchema.index({ user: 1, house: 1 }, { unique: true });
 
 const Review = mongoose.model('Review', reviewSchema);
 

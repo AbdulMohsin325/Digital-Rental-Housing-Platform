@@ -1,107 +1,126 @@
-// import Review from "../models/review";
+import Review from "../models/review.js";
+import House from "../models/House.js";
 
+export const createReview = async (req, res) => {
+  try {
+    const { houseId, rating, comment } = req.body;
 
-// export const createReview = async (req, res) => {
-//     try {
-//         const { houseId, rating, comment } = req.body;
+    const house = await House.findOne({ homeId: houseId });
 
-//         const review = await Review.create({
-//             user: req.user._id,
-//             house: houseId,
-//             rating,
-//             comment
-//         });
+    if (!house) {
+      return res.status(404).json({
+        success: false,
+        message: "House not found"
+      });
+    }
 
-//         res.status(201).json({
-//             success: true,
-//             data: review
-//         });
+    const review = await Review.create({
+      user: req.user._id.toString(),
+      house: houseId,
+      rating,
+      comment
+    });
 
-//     } catch (error) {
-//         res.status(400).json({ message: error.message });
-//     }
-// };
+    res.status(201).json({
+      success: true,
+      data: review
+    });
 
-// //Get Review for House
+  } catch (error) {
 
-// export const getHouseReviews = async (req, res) => {
-//     try {
-//         const reviews = await Review.find({ house: req.params.houseId })
-//             .populate("user", "name");
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "You already reviewed this house"
+      });
+    }
 
-//         res.json({
-//             success: true,
-//             count: reviews.length,
-//             data: reviews
-//         });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
 
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
+export const getHouseReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find({ house: req.params.houseId });
 
-// export const getReviewById = async (req, res) => {
-//     try {
-//         const review = await Review.findById(req.params.id)
-//             .populate('user house');
+    res.json({
+      success: true,
+      count: reviews.length,
+      data: reviews
+    });
 
-//         if (!review) {
-//             return res.status(404).json({ message: "Review not found" });
-//         }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+export const deleteReview = async (req, res) => {
+  try {
+    const review = await Review.findById(req.params.id);
 
-//         res.status(200).json(review);
-//     } catch (error) {
-//         res.status(500).json({ message: "Server error" });
-//     }
-// };
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
 
-// export const updateReview = async (req, res) => {
-//     try {
-//         const review = await Review.findById(req.params.id);
+    if (
+      review.user !== req.user._id.toString() &&
+      !req.user.isAdmin
+    ) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
 
-//         if (!review) {
-//             return res.status(404).json({ message: "Review not found" });
-//         }
+    await review.deleteOne();
 
-//         if (
-//             review.user.toString() !== req.user._id.toString() &&
-//             !req.user.isAdmin
-//         ) {
-//             return res.status(403).json({ message: "Not authorized" });
-//         }
+    res.json({
+      success: true,
+      message: "Review deleted"
+    });
 
-//         const updatedReview = await Review.findByIdAndUpdate(
-//             req.params.id,
-//             req.body,
-//             { new: true }
-//         );
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-//         res.status(200).json(updatedReview);
-//     } catch (error) {
-//         res.status(500).json({ message: "Server error" });
-//     }
-// };
-// //Review by id
+export const updateReview = async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
 
-// export const deleteReview = async (req, res) => {
-//     try {
-//         const review = await Review.findById(req.params.id);
+    const review = await Review.findById(req.params.id);
 
-//         if (!review) {
-//             return res.status(404).json({ message: "Review not found" });
-//         }
+    if (!review) {
+      return res.status(404).json({
+        success: false,
+        message: "Review not found"
+      });
+    }
 
-//         if (
-//             review.user.toString() !== req.user._id.toString() &&
-//             !req.user.isAdmin
-//         ) {
-//             return res.status(403).json({ message: "Not authorized" });
-//         }
+    // Only owner or admin can update
+    if (
+      review.user !== req.user._id.toString() &&
+      !req.user.isAdmin
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to update this review"
+      });
+    }
 
-//         await review.deleteOne();
+    review.rating = rating || review.rating;
+    review.comment = comment || review.comment;
 
-//         res.status(200).json({ message: "Review deleted successfully" });
-//     } catch (error) {
-//         res.status(500).json({ message: "Server error" });
-//     }
-// };
+    await review.save();
+
+    res.json({
+      success: true,
+      data: review
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
