@@ -1,21 +1,38 @@
-import Booking from "../models/Booking.js";
+import Booking from "../models/booking.js";
 import House from "../models/House.js";
 
 //Booking is done by user only
 export const createBooking = async (req, res) => {
     try {
         const { houseId, startDate, endDate } = req.body;
-
-        const house = await House.findById(houseId);
-
+        const house = await House.findOne({homeId: houseId});
+        
+        // const house = await House.findOne({homeId: homeId});
+        console.log(house);
+        
         // Check if house exists
         if (!house) {
-            return res.status(404).json({ message: "House not found" });
+            return res.status(404).json({ success: false, message: "House not found" });
         }
 
-        const days =(new Date(checkOut) - new Date(checkIn)) /(1000 * 60 * 60 * 24);
+    //     // Check overlapping booking
+    //     const overlappingBooking = await Booking.findOne({
+    //   house: houseId,
+    //   status: { $ne: "cancelled" },
+    //   startDate: { $lt: endDate },
+    //   endDate: { $gt: startDate }
+    // });
 
-        const totalPrice = days * house.price; // simple for now
+    // // if (overlappingBooking) {
+    // //   return res.status(400).json({
+    // //     success: false,
+    // //     message: "House is already booked for selected dates"
+    // //   });
+    // // }
+
+        const days =(new Date(endDate) - new Date(startDate)) /(1000 * 60 * 60 * 24);
+
+        const totalPrice = days * house.price;
 
         // Create booking
         const booking = await Booking.create({
@@ -32,7 +49,7 @@ export const createBooking = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ success: false, message: error.message });
     }
 };
 

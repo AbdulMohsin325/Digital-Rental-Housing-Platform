@@ -3,40 +3,40 @@ import mongoose from 'mongoose';
 
 const houseSchema = new mongoose.Schema(
     {
-        title:{
+        title: {
             type: String,
             // required: true,
             trim: true
 
         },
-       description: {
-           type: String,
-           trim: true
-       },
-       price: {
-           type: Number,
-           required: true
-       },
-       type: {
-           type: String,
-           trim: true
-       },
-       rooms: {
-           type: Number,
-           required: true
-       },
-       bathrooms: {
-           type: Number,
-           required: true
-       },
-       isFurnished: {
-           type: Boolean,
-           trim: true
-       },
-       images: {
-           type: [String],
-           trim: true
-       },
+        description: {
+            type: String,
+            trim: true
+        },
+        price: {
+            type: Number,
+            required: true
+        },
+        type: {
+            type: String,
+            trim: true
+        },
+        rooms: {
+            type: Number,
+            required: true
+        },
+        bathrooms: {
+            type: Number,
+            required: true
+        },
+        isFurnished: {
+            type: Boolean,
+            trim: true
+        },
+        images: {
+            type: [String],
+            trim: true
+        },
         // name: {
         //     type: String,
         //     trim: true
@@ -57,11 +57,11 @@ const houseSchema = new mongoose.Schema(
             default: true
         },
         owner: {
-    type: String,
-    // ref: "User",
-    required: true
-},
-homeId: {
+            type: String,
+            // ref: "User",
+            required: true
+        },
+        homeId: {
             type: String,
             trim: true
         }

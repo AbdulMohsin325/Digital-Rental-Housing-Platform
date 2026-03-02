@@ -7,13 +7,12 @@ import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
     house: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'House',
+        type: String,
         required: true
+      
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
         required: true
     },
     startDate: {

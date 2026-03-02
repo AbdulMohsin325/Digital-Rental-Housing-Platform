@@ -22,7 +22,7 @@ import House from "../models/House.js";
 
 export const createHouse = async (req, res) => {
     try {
-        const { title, description, price, type, rooms, bathrooms, isFurnished, address, images } = req.body;
+        const { title, description, price, type, rooms, bathrooms, isFurnished, address, images ,owner} = req.body;
 
         const house = await House.create({
             title,
@@ -34,7 +34,7 @@ export const createHouse = async (req, res) => {
             address,
             price,
             images,
-            owner: req.user._id   // coming from protect middleware
+            owner   // coming from protect middleware
         });
 
         res.status(201).json({
@@ -89,14 +89,14 @@ export const getHouseById = async (req, res) => {
 // Update House (Admin only)
 export const updateHouse = async (req, res) => {
     try {
-        const house = await House.findById(req.params.id);
+        const house = await House.findOne({homeId: req.params.id});
 
         if (!house) {
             return res.status(404).json({ message: "House not found" });
         }
 
-        const updatedHouse = await House.findByIdAndUpdate(
-            req.params.id,
+        const updatedHouse = await House.findOneAndUpdate(
+            {homeId: req.params.id},
             req.body,
             { new: true }
         );
@@ -111,7 +111,7 @@ export const updateHouse = async (req, res) => {
 // Delete House (Admin only)
 export const deleteHouse = async (req, res) => {
     try {
-        const house = await House.findById(req.params.id);
+const house = await House.findOne({ homeId: req.params.id });
 
         if (!house) {
             return res.status(404).json({ message: "House not found" });

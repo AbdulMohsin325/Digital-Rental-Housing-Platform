@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 const reviewSchema = new mongoose.Schema({
 
     house: {
-        type: string,
+        type: String,
         required: true
     },
     user: {
-        type: string,
+        type: String,
     },
     rating: {
         type: Number,
@@ -25,6 +25,7 @@ const reviewSchema = new mongoose.Schema({
     
     
 }, {timestamps: true})
+// Prevent duplicate reviews (one review per user per house)
 reviewSchema.index({ user: 1, house: 1 }, { unique: true });
 
 const Review = mongoose.model('Review', reviewSchema);
