@@ -117,6 +117,5 @@ const sendTokenResponse = (user, statusCode, res, message) => {
         success: true,
         message,
         token,
-        data: user
     });
 };
