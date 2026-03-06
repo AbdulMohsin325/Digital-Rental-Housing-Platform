@@ -27,7 +27,7 @@ export const createBooking = async (req, res) => {
 
     const overlappingBooking = await Booking.findOne({
       house: houseId,
-      status: { $nin: ["cancelled", "rejected"] },
+      status: { $nin: ["pending","cancelled", "rejected"] },
       $or: [
         {
           startDate: { $lt: end },
@@ -90,31 +90,77 @@ export const getBookingList = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Find houses owned by the logged-in user
-    const houses = await House.find({ owner: req.user.userId }).select('homeId');
-    const houseIds = houses.map(house => house.homeId);
+    const ownerId = req.user.userId;
 
-    // Find total count of bookings
-    const total = await Booking.countDocuments({ house: { $in: houseIds } });
+    const bookings = await Booking.aggregate([
+      // Join houses collection
+      {
+        $lookup: {
+          from: "houses",
+          localField: "house",
+          foreignField: "homeId",
+          as: "house"
+        }
+      },
 
-    // Find bookings for these houses with pagination
-    const bookings = await Booking.find({ house: { $in: houseIds } })
-      .skip(skip)
-      .limit(limit)
-      .populate("house")
-      .sort({ createdAt: -1 });
+      // Convert house array to object
+      {
+        $unwind: "$house"
+      },
 
-    if (bookings.length === 0) {
+      // Filter houses owned by logged-in user
+      {
+        $match: {
+          "house.owner": ownerId
+        }
+      },
+
+      // Sort newest bookings first
+      {
+        $sort: { createdAt: -1 }
+      },
+
+      // Pagination
+      {
+        $facet: {
+          metadata: [
+            { $count: "total" }
+          ],
+          data: [
+            { $skip: skip },
+            { $limit: limit },
+            {$project:{
+              title: "$house.title",
+              price:1,
+              address: "$house.address",
+              thumbnail: "$house.thumbnail",  
+              startDate: 1,
+              endDate: 1,
+              totalPrice: 1,
+              status: 1,
+              createdAt: 1
+            }}
+          ]
+        }
+      }
+
+      
+    ]);
+
+    const total = bookings[0].metadata[0]?.total || 0;
+    const data = bookings[0].data;
+
+    if (data.length === 0) {
       return res.json({ status: 0, message: "No bookings found" });
     }
 
     res.json({
       status: 1,
-      count: bookings.length,
+      count: data.length,
       total,
       page,
       totalPages: Math.ceil(total / limit),
-      data: bookings
+      data
     });
 
   } catch (error) {
