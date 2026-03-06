@@ -4,7 +4,10 @@ import {
   getMyBookings,
   getAllBookings,
   cancelBooking,
-  getBookedDates
+  getBookedDates,
+  getBookingList,
+  rejectBooking,
+  approveBooking
 } from "../controllers/bookingController.js";
 
 import { protect, authorizeAdmin } from "../middleware/auth.js";
@@ -16,5 +19,10 @@ router.get("/my", protect, getMyBookings);
 router.get("/", protect, authorizeAdmin, getAllBookings);
 router.put("/:id/cancel", protect, cancelBooking);
 router.get("/house/:houseId/booked-dates", getBookedDates);
+
+router.get("/owner/list", protect, getBookingList);
+router.get("/owner/reject", protect, rejectBooking);
+router.post("/owner/approve", protect, approveBooking);
+
 
 export default router;
